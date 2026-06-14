@@ -5,7 +5,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 
 /**
  * @title CrowdfundingDAO
- * @author v0
+ * @author Kiril Boshnakoski
  * @notice A decentralized, DAO-style crowdfunding platform where raised funds are
  *         NOT freely withdrawable by the campaign creator. Instead, after a campaign
  *         is funded, the creator must submit "spending proposals" that contributors

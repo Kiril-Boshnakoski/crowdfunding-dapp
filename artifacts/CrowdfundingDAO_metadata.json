@@ -1,0 +1,847 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "AlreadyVoted",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "AmountExceedsAvailableFunds",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "CampaignDoesNotExist",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "CampaignEnded",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "CampaignNotFunded",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "CampaignStillActive",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "CampaignSucceeded",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidDeadline",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidVotingPeriod",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NotCampaignCreator",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NotContributor",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NothingToRefund",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ProposalAlreadyExecuted",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ProposalDoesNotExist",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ProposalNotApproved",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ReentrancyGuardReentrantCall",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "TransferFailed",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "VotingPeriodEnded",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "VotingPeriodNotEnded",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroContribution",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroGoal",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroProposalAmount",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "goal",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "deadline",
+						"type": "uint256"
+					}
+				],
+				"name": "CampaignCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "contributor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "totalRaised",
+						"type": "uint256"
+					}
+				],
+				"name": "Funded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "FundsReleased",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "votingDeadline",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"name": "ProposalCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "contributor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "RefundClaimed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "voter",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bool",
+						"name": "support",
+						"type": "bool"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "weight",
+						"type": "uint256"
+					}
+				],
+				"name": "Voted",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "APPROVAL_THRESHOLD_BPS",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					}
+				],
+				"name": "availableFunds",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					}
+				],
+				"name": "claimRefund",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					}
+				],
+				"name": "contribute",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "contributions",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "goal",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "durationSeconds",
+						"type": "uint256"
+					}
+				],
+				"name": "createCampaign",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votingDurationSecs",
+						"type": "uint256"
+					}
+				],
+				"name": "createProposal",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					}
+				],
+				"name": "getCampaign",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "creator",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "goal",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "deadline",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "raised",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "releasedAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "contributorCount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "proposalCount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "exists",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct CrowdfundingDAO.Campaign",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "getProposal",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "votingDeadline",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "votesFor",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "votesAgainst",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "executed",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct CrowdfundingDAO.Proposal",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "hasVoted",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nextCampaignId",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "releaseFunds",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "proposalId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "support",
+						"type": "bool"
+					}
+				],
+				"name": "vote",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "campaignId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "votingPowerOf",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
+			}
+		],
+		"devdoc": {
+			"author": "Kiril Boshnakoski",
+			"details": "Security architecture overview:      - ReentrancyGuard protects every function that performs an external ETH transfer        ({contribute} refunds are pull-based; {releaseFunds} and {claimRefund} send ETH).      - The Checks-Effects-Interactions (CEI) pattern is strictly enforced: all storage        mutations happen BEFORE any external call, so a malicious recipient contract        cannot observe or exploit an inconsistent intermediate state.      - Voting power is proportional to the wei each address contributed to that specific        campaign, preventing non-contributors or low-stake actors from hijacking decisions.      - Custom errors are used everywhere instead of revert strings to minimize gas and        keep failure modes machine-readable.      - All ETH is escrowed inside this contract; per-campaign accounting (`raised`,        `releasedAmount`) guarantees one campaign can never spend another campaign's funds.",
+			"errors": {
+				"ReentrancyGuardReentrantCall()": [
+					{
+						"details": "Unauthorized reentrant call."
+					}
+				]
+			},
+			"kind": "dev",
+			"methods": {
+				"claimRefund(uint256)": {
+					"details": "Refunds are pull-based (each contributor withdraws their own funds) to avoid      unbounded loops and griefing. CHECKS: campaign ended, goal not met, caller has      a non-zero balance. EFFECTS: the caller's contribution is zeroed and `raised`      reduced BEFORE the transfer. INTERACTIONS: ETH is sent last, guarded by      `nonReentrant`, fully implementing CEI.",
+					"params": {
+						"campaignId": "The failed campaign to refund from."
+					}
+				},
+				"contribute(uint256)": {
+					"details": "CHECKS: campaign exists, deadline not passed, msg.value > 0.      EFFECTS: contribution and raised totals are updated before any event.      INTERACTIONS: none (ETH is simply held by this contract).      `nonReentrant` is applied defensively even though no external call is made,      keeping fund-handling entry points uniformly protected.",
+					"params": {
+						"campaignId": "The campaign to fund."
+					}
+				},
+				"createCampaign(uint256,uint256)": {
+					"details": "CHECKS: goal and duration are validated. EFFECTS: campaign is written to storage      and the id counter is incremented. No external interactions occur here.",
+					"params": {
+						"durationSeconds": "Seconds from now until the contribution deadline. Must be > 0.",
+						"goal": "Funding goal in wei. Must be greater than zero."
+					},
+					"returns": {
+						"campaignId": "     The id assigned to the new campaign."
+					}
+				},
+				"createProposal(uint256,uint256,string,uint256)": {
+					"details": "CHECKS: caller is creator, campaign reached its goal, amount is valid and does not      exceed `raised - releasedAmount`. EFFECTS: proposal stored, counter incremented.      Validating against available (not total) funds prevents the creator from proposing      to spend money already released by earlier proposals.",
+					"params": {
+						"amount": "Wei requested. Must be > 0 and within currently available funds.",
+						"campaignId": "The funded campaign.",
+						"description": "Human-readable purpose of the spend.",
+						"votingDurationSecs": "Seconds the proposal stays open for voting. Must be > 0."
+					},
+					"returns": {
+						"proposalId": "        The id assigned to the new proposal."
+					}
+				},
+				"releaseFunds(uint256,uint256)": {
+					"details": "Anyone may trigger execution (the outcome is deterministic), but funds always go      to the campaign creator. CHECKS: proposal exists, not already executed, voting      period over, approval threshold met, and the amount still fits within available      funds (re-validated to be safe against any prior releases). EFFECTS: `executed`      is set and `releasedAmount` increased BEFORE the transfer. INTERACTIONS: ETH is      sent last under `nonReentrant`, fully respecting CEI.",
+					"params": {
+						"campaignId": "The campaign the proposal belongs to.",
+						"proposalId": "The approved proposal to execute."
+					}
+				},
+				"vote(uint256,uint256,bool)": {
+					"details": "CHECKS: campaign & proposal exist, caller is a contributor, proposal not executed,      voting window open, caller has not already voted. EFFECTS: the vote is recorded and      weighted by the caller's contribution. No external interactions occur.",
+					"params": {
+						"campaignId": "The campaign the proposal belongs to.",
+						"proposalId": "The proposal to vote on.",
+						"support": "True to vote in favour, false to vote against."
+					}
+				}
+			},
+			"stateVariables": {
+				"APPROVAL_THRESHOLD_BPS": {
+					"details": "5000 bps = 50%. A proposal needs `votesFor * 10000 > raised * APPROVAL_THRESHOLD_BPS`,      i.e. strictly MORE than 50% of all contributed weight must vote in favour."
+				}
+			},
+			"title": "CrowdfundingDAO",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"APPROVAL_THRESHOLD_BPS()": {
+					"notice": "Threshold (in basis points) of total raised required for a proposal to pass."
+				},
+				"availableFunds(uint256)": {
+					"notice": "Returns the wei still available to be proposed/spent for a campaign."
+				},
+				"claimRefund(uint256)": {
+					"notice": "Claim a refund of your contribution if the campaign FAILED to reach its goal         by the deadline."
+				},
+				"contribute(uint256)": {
+					"notice": "Contribute ETH to an active campaign. Voting power equals total contribution."
+				},
+				"contributions(uint256,address)": {
+					"notice": "campaignId => contributor => amount contributed (wei). Doubles as voting power."
+				},
+				"createCampaign(uint256,uint256)": {
+					"notice": "Create a new crowdfunding campaign."
+				},
+				"createProposal(uint256,uint256,string,uint256)": {
+					"notice": "Create a spending proposal for a funded campaign. Only the creator may call this."
+				},
+				"getCampaign(uint256)": {
+					"notice": "Returns the full campaign struct for the given id."
+				},
+				"getProposal(uint256,uint256)": {
+					"notice": "Returns the full proposal struct for the given campaign/proposal pair."
+				},
+				"hasVoted(uint256,uint256,address)": {
+					"notice": "campaignId => proposalId => voter => whether they have already voted."
+				},
+				"nextCampaignId()": {
+					"notice": "Auto-incrementing id assigned to the next created campaign."
+				},
+				"releaseFunds(uint256,uint256)": {
+					"notice": "Release funds to the creator for an approved proposal once voting has ended."
+				},
+				"vote(uint256,uint256,bool)": {
+					"notice": "Vote on a spending proposal. Voting power equals your contribution to the campaign."
+				},
+				"votingPowerOf(uint256,address)": {
+					"notice": "Returns the voting power (contribution in wei) of an address for a campaign."
+				}
+			},
+			"notice": "A decentralized, DAO-style crowdfunding platform where raised funds are         NOT freely withdrawable by the campaign creator. Instead, after a campaign         is funded, the creator must submit \"spending proposals\" that contributors         vote on. Funds are only released when a proposal is approved by a majority         of contribution-weighted voting power.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/CrowdfundingDAO.sol": "CrowdfundingDAO"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+			"keccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1e1d079e8edfb58efd23a311e315a4807b01b5d1cf153f8fa2d0608b9dec3e99",
+				"dweb:/ipfs/QmTBExeX2SDTkn5xbk5ssbYSx7VqRp9H4Ux1CY4uQM4b9N"
+			]
+		},
+		"@openzeppelin/contracts/utils/StorageSlot.sol": {
+			"keccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9f660b1f351b757dfe01438e59888f31f33ded3afcf5cb5b0d9bf9aa6f320a8b",
+				"dweb:/ipfs/QmarDJ5hZEgBtCmmrVzEZWjub9769eD686jmzb2XpSU1cM"
+			]
+		},
+		"contracts/CrowdfundingDAO.sol": {
+			"keccak256": "0x2b83169e8e9f7634bd3406f96f902f3d3b2dc16cb3d6cea268fb31bbd033dcc1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8ba5af79abb2195344ba0acee4e9e29600686c687bf961a0907c0fc838c370cb",
+				"dweb:/ipfs/QmNVN87HkUPVEUr2eWkt35WwqDRz6beoGakPHhTqNdhgVT"
+			]
+		}
+	},
+	"version": 1
+}
