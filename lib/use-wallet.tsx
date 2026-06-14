@@ -1,11 +1,8 @@
 "use client"
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react"
+import { createContext, useContext, useMemo, useState, useEffect, type ReactNode } from "react"
+import { useAccount, useConnect, useDisconnect } from "wagmi"
 import type { Address } from "./types"
-
-// Mock wallet provider. Swap the body of `connect` for a real
-// Wagmi/RainbowKit connector and read `address`/`isConnected` from
-// `useAccount()` later — the consuming components won't need to change.
 
 interface WalletState {
   address: Address | null
@@ -16,18 +13,42 @@ interface WalletState {
 
 const WalletContext = createContext<WalletState | null>(null)
 
-const MOCK_ADDRESS = "0xF39f...2266" as Address
-
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const [address, setAddress] = useState<Address | null>(null)
+  const [mounted, setMounted] = useState(false)
 
-  const connect = useCallback(() => setAddress(MOCK_ADDRESS), [])
-  const disconnect = useCallback(() => setAddress(null), [])
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-  const value = useMemo<WalletState>(
-    () => ({ address, isConnected: address !== null, connect, disconnect }),
-    [address, connect, disconnect],
-  )
+  const { address, isConnected } = useAccount()
+  const { connect, connectors } = useConnect()
+  const { disconnect } = useDisconnect()
+
+  const handleConnect = () => {
+    const injectedConnector = connectors.find((c) => c.id === "injected")
+    if (injectedConnector) {
+      connect({ connector: injectedConnector })
+    } else if (connectors.length > 0) {
+      connect({ connector: connectors[0] })
+    }
+  }
+
+  const value = useMemo<WalletState>(() => {
+    if (!mounted) {
+      return {
+        address: null,
+        isConnected: false,
+        connect: () => {},
+        disconnect: () => {},
+      }
+    }
+    return {
+      address: (address || null) as Address | null,
+      isConnected,
+      connect: handleConnect,
+      disconnect,
+    }
+  }, [mounted, address, isConnected, connectors, connect, disconnect])
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
 }
@@ -37,3 +58,4 @@ export function useWallet() {
   if (!ctx) throw new Error("useWallet must be used within a WalletProvider")
   return ctx
 }
+

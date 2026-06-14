@@ -15,6 +15,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { ProposalCard } from "@/components/proposal-card"
 import { getCampaignState, type Campaign } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { useWallet } from "@/lib/use-wallet"
 
 function deadlineLabel(ts: number) {
   const diff = ts - Date.now()
@@ -25,34 +26,59 @@ function deadlineLabel(ts: number) {
   return `${hours}h left`
 }
 
+function shortenAddress(addr: string) {
+  if (addr.length <= 10) return addr
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+}
+
 export function CampaignCard({
   campaign,
   onContribute,
+  onCreateProposal,
   onVote,
   onExecute,
   onRefund,
 }: {
   campaign: Campaign
   onContribute: (campaignId: number, amount: number) => void
+  onCreateProposal: (campaignId: number, amount: number, description: string, durationSecs: number) => void
   onVote: (campaignId: number, proposalId: number, support: boolean) => void
   onExecute: (campaignId: number, proposalId: number) => void
   onRefund: (campaignId: number) => void
 }) {
+  const { address: userAddress } = useWallet()
   const [expanded, setExpanded] = useState(false)
   const [amount, setAmount] = useState("")
+  
+  // Proposal Form State
+  const [propAmount, setPropAmount] = useState("")
+  const [propDesc, setPropDesc] = useState("")
+  const [propDuration, setPropDuration] = useState("3")
 
   const state = getCampaignState(campaign)
   const isActive = state === "active"
   const isFunded = state === "funded"
   const isFailed = state === "failed"
   const canRefund = isFailed && campaign.myContribution > 0
+  const isCreator = campaign.creator.toLowerCase() === userAddress?.toLowerCase()
 
   function handleContribute() {
     const value = Number(amount)
     if (!value || value <= 0) return
-    // Wiring note: contract write -> contribute(campaignId) with msg.value
     onContribute(campaign.id, value)
     setAmount("")
+  }
+
+  function handleCreateProposalSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const amt = Number(propAmount)
+    const durDays = Number(propDuration)
+    if (!amt || amt <= 0 || !propDesc.trim() || !durDays || durDays <= 0) return
+    
+    onCreateProposal(campaign.id, amt, propDesc.trim(), durDays * 24 * 60 * 60)
+    setPropAmount("")
+    setPropDesc("")
+    setPropDuration("3")
   }
 
   return (
@@ -79,7 +105,7 @@ export function CampaignCard({
             <h3 className="text-base font-semibold leading-snug text-balance">
               {campaign.title}
             </h3>
-            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground text-pretty">
+            <p className="mt-1 max-w-xl text-sm text-muted-foreground text-pretty">
               {campaign.description}
             </p>
           </div>
@@ -89,13 +115,13 @@ export function CampaignCard({
 
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1 font-mono">
-            <Users className="size-3" /> by {campaign.creator}
+            <Users className="size-3" /> by {shortenAddress(campaign.creator)}
           </span>
           {campaign.myContribution > 0 && (
             <span>
               You backed{" "}
               <span className="font-medium text-foreground">
-                {campaign.myContribution} ETH
+                {campaign.myContribution.toFixed(4).replace(/\.?0+$/, "")} ETH
               </span>
             </span>
           )}
@@ -159,16 +185,73 @@ export function CampaignCard({
           </button>
 
           {expanded && (
-            <div className="space-y-4 border-t border-border bg-muted/20 p-5">
+            <div className="space-y-5 border-t border-border bg-muted/20 p-5">
               <div className="grid grid-cols-3 gap-3">
-                <Stat label="Raised" value={`${campaign.raised.toFixed(1)}`} />
-                <Stat label="Released" value={`${campaign.released.toFixed(1)}`} />
+                <Stat label="Raised" value={`${campaign.raised.toFixed(2)}`} />
+                <Stat label="Released" value={`${campaign.released.toFixed(2)}`} />
                 <Stat
                   label="Treasury"
-                  value={`${(campaign.raised - campaign.released).toFixed(1)}`}
+                  value={`${(campaign.raised - campaign.released).toFixed(2)}`}
                   highlight
                 />
               </div>
+
+              {/* Proposal creation panel - only visible to creator */}
+              {isCreator && (
+                <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+                  <h4 className="text-sm font-semibold text-foreground mb-3">Create Spending Proposal</h4>
+                  <form onSubmit={handleCreateProposalSubmit} className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1">
+                          Amount (ETH)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.0001"
+                          required
+                          value={propAmount}
+                          onChange={(e) => setPropAmount(e.target.value)}
+                          placeholder="e.g. 5"
+                          className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-xs outline-none focus:border-ring"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1">
+                          Voting Period (Days)
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          required
+                          value={propDuration}
+                          onChange={(e) => setPropDuration(e.target.value)}
+                          placeholder="e.g. 3"
+                          className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-xs outline-none focus:border-ring"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1">
+                        Purpose / Description
+                      </label>
+                      <textarea
+                        required
+                        rows={2}
+                        value={propDesc}
+                        onChange={(e) => setPropDesc(e.target.value)}
+                        placeholder="What are these funds being spent on?"
+                        className="w-full rounded-lg border border-border bg-background px-3 py-1.5 text-xs outline-none resize-none focus:border-ring"
+                      />
+                    </div>
+                    <Button type="submit" size="sm" className="w-full">
+                      Submit Proposal
+                    </Button>
+                  </form>
+                </div>
+              )}
 
               {campaign.proposals.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-border py-6 text-center text-sm text-muted-foreground">
@@ -214,3 +297,4 @@ function Stat({
     </div>
   )
 }
+

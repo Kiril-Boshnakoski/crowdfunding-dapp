@@ -9,13 +9,12 @@ import { injected } from 'wagmi/connectors';
 
 // Configure Wagmi config
 export const config = createConfig({
-  chains: [mainnet, sepolia],
+  chains: [sepolia],
   connectors: [
     injected(), // Supports Metamask, Frame, Rabby, Brave, etc.
   ],
   transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(), // We use Sepolia testnet or local networks for testing
+    [sepolia.id]: http('https://ethereum-sepolia-rpc.publicnode.com') // We use Sepolia testnet or local networks for testing
   },
 });
 

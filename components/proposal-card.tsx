@@ -15,6 +15,11 @@ function timeLeft(ts: number) {
   return `${hours}h left`
 }
 
+function shortenAddress(addr: string) {
+  if (addr.length <= 10) return addr
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+}
+
 const statusTone = {
   Active: "active",
   Passed: "passed",
@@ -35,13 +40,17 @@ export function ProposalCard({
   const canVote = proposal.status === "Active" && !proposal.hasVoted
   const canExecute = proposal.status === "Passed"
 
+  const formatWeight = (val: number) => {
+    return val.toFixed(4).replace(/\.?0+$/, "")
+  }
+
   return (
     <div className="rounded-xl border border-border bg-background p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm font-medium leading-snug text-pretty">{proposal.reason}</p>
           <p className="mt-1 font-mono text-xs text-muted-foreground">
-            to {proposal.recipient}
+            to {shortenAddress(proposal.recipient)}
           </p>
         </div>
         <StatusBadge tone={statusTone[proposal.status]}>{proposal.status}</StatusBadge>
@@ -56,13 +65,13 @@ export function ProposalCard({
         <ProgressBar value={proposal.yesWeight} goal={totalWeight || 1} />
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1 text-success">
-            <ThumbsUp className="size-3" /> {proposal.yesWeight.toFixed(1)} ETH
+            <ThumbsUp className="size-3" /> {formatWeight(proposal.yesWeight)} ETH
           </span>
           <span className="inline-flex items-center gap-1">
             <Clock className="size-3" /> {timeLeft(proposal.votingEndsAt)}
           </span>
           <span className="inline-flex items-center gap-1 text-destructive">
-            {proposal.noWeight.toFixed(1)} ETH <ThumbsDown className="size-3" />
+            {formatWeight(proposal.noWeight)} ETH <ThumbsDown className="size-3" />
           </span>
         </div>
       </div>
@@ -110,3 +119,4 @@ export function ProposalCard({
     </div>
   )
 }
+
