@@ -51,6 +51,8 @@ contract CrowdfundingDAO is ReentrancyGuard {
     error CampaignSucceeded();
     error NothingToRefund();
     error TransferFailed();
+    error EmptyTitle();
+    error EmptyDescription();
 
     // ---------------------------------------------------------------------
     //                                Data Types
@@ -65,6 +67,8 @@ contract CrowdfundingDAO is ReentrancyGuard {
      */
     struct Campaign {
         address creator;          // Address that created the campaign and may submit proposals.
+        string title;            // Title of the Campaign
+        string description;       // Short description of the campaign
         uint256 goal;             // Funding goal in wei. Must be > 0.
         uint256 deadline;         // Unix timestamp after which contributions are closed.
         uint256 raised;           // Total wei contributed to this campaign.
@@ -122,7 +126,9 @@ contract CrowdfundingDAO is ReentrancyGuard {
         uint256 indexed campaignId,
         address indexed creator,
         uint256 goal,
-        uint256 deadline
+        uint256 deadline,
+        string title,        
+        string description   
     );
     event Funded(
         uint256 indexed campaignId,
@@ -189,23 +195,26 @@ contract CrowdfundingDAO is ReentrancyGuard {
      * @param durationSeconds  Seconds from now until the contribution deadline. Must be > 0.
      * @return campaignId      The id assigned to the new campaign.
      *
-     * @dev CHECKS: goal and duration are validated. EFFECTS: campaign is written to storage
+     * @dev CHECKS: goal, duration, title and description are validated. EFFECTS: campaign is written to storage
      *      and the id counter is incremented. No external interactions occur here.
      */
-    function createCampaign(uint256 goal, uint256 durationSeconds)
+    function createCampaign(uint256 goal, uint256 durationSeconds, string calldata title, string calldata description)
         external
         returns (uint256 campaignId)
     {
         // --- Checks ---
         if (goal == 0) revert ZeroGoal();
         if (durationSeconds == 0) revert InvalidDeadline();
-
+        if (bytes(title).length == 0) revert EmptyTitle();
+        if (bytes(description).length == 0) revert EmptyDescription();
         // --- Effects ---
         campaignId = nextCampaignId++;
         uint256 deadline = block.timestamp + durationSeconds;
 
         _campaigns[campaignId] = Campaign({
             creator: msg.sender,
+            title: title,              
+            description: description,  
             goal: goal,
             deadline: deadline,
             raised: 0,
@@ -215,7 +224,7 @@ contract CrowdfundingDAO is ReentrancyGuard {
             exists: true
         });
 
-        emit CampaignCreated(campaignId, msg.sender, goal, deadline);
+        emit CampaignCreated(campaignId, msg.sender, goal, deadline, title, description);
     }
 
     /**
